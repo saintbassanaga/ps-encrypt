@@ -1,0 +1,121 @@
+<main [formGroup]="encryptionForm" class="container flex flex-col px-4 py-20 m-auto mx-auto">
+
+  <mat-form-field class="w-full mx-auto sm:w-64">
+    <mat-label>Database</mat-label>
+    <mat-select (selectionChange)="onEncryptionTableChange($event.value)" [value]="selectedEncryptionTable()?.name">
+      @for (encryptionTable of encryptionTables(); track encryptionTable.name) {
+      <mat-option [value]="encryptionTable.name">
+        {{ encryptionTable.name }}
+      </mat-option>
+      }
+      @empty {Loading...}
+    </mat-select>
+  </mat-form-field>
+
+  <section class="flex flex-col justify-between gap-8 mt-16 xl:flex-row">
+
+    <!-- Input text -->
+    <section class="flex flex-col w-full gap-4 xl:w-5/12">
+
+      <div class="flex items-center gap-4">
+        @if(encryptionForm.value.input) {
+        <span
+          [ngClass]="{ 'bg-emerald-600 text-emerald-600': encryptionStatus().input.result, 'bg-red-600 text-red-600': !encryptionStatus().input.result}"
+          class="w-auto px-4 py-2 mr-auto text-sm font-medium transition-colors rounded bg-opacity-20 ">
+          Encryption status: <span class="font-semibold">{{ encryptionStatus().input.result ? 'ok' : 'nok' }}</span>
+        </span>
+        }
+        <!-- Clear input -->
+        <button (click)="encryptionForm.controls.input.reset()" [disabled]="!encryptionForm.value.input" mat-button
+          color="warn" class="ml-auto">Clear</button>
+        <!-- Copy to clipboard -->
+        <button [disabled]="!encryptionForm.value.input" mat-button
+          [cdkCopyToClipboard]="encryptionForm.getRawValue().input" [cdkCopyToClipboardAttempts]="5">Copy!</button>
+      </div>
+
+      <mat-form-field subscriptSizing="dynamic" class="bg-slate-50">
+        <mat-label>Input Procedure/Function</mat-label>
+        <textarea formControlName="input" matInput cols="50" rows="15"></textarea>
+      </mat-form-field>
+
+      <!-- Unencrypted words -->
+      @if (encryptionStatus().input.unencryptedWords?.length) {
+      <section class="flex flex-col gap-y-1">
+        <p class="text-slate-400">Unencrypted words: <span class="font-semibold text-red-600">{{
+            encryptionStatus().input.unencryptedWords?.length }}</span></p>
+        <ul class="w-full mt-2 overflow-x-hidden max-h-80">
+          @for (unencryptedWord of encryptionStatus().input.unencryptedWords; track $index) {
+          <li
+            class="inline-block px-2 py-1 mb-2 mr-4 text-sm font-medium text-red-600 bg-red-600 rounded bg-opacity-20">
+            {{ unencryptedWord }}
+          </li>
+          }
+        </ul>
+      </section>
+      }
+    </section>
+
+    <!-- Commands -->
+    <div class="flex flex-row gap-5 m-auto xl:flex-col">
+
+      <!-- Encrypt button -->
+      <button (click)="encrypt()" [disabled]="encryptionForm.disabled || encryptionForm.invalid" mat-flat-button
+        color="primary" class="m-auto">
+        Encrypt
+      </button>
+
+      <!-- Decrypt button -->
+      <button (click)="decrypt()" [disabled]="encryptionForm.disabled || encryptionForm.invalid" mat-stroked-button
+        color="primary" class="m-auto">
+        Decrypt
+      </button>
+
+    </div>
+
+    <!-- Output text -->
+    <div class="flex flex-col w-full gap-4 xl:w-5/12">
+      <div class="flex items-center gap-4">
+        @if(encryptionForm.value.output) {
+        <span
+          [ngClass]="{ 'bg-emerald-600 text-emerald-600':  encryptionStatus().output.result, 'bg-red-600 text-red-600': !encryptionStatus().output.result }"
+          class="w-auto px-4 py-2 mr-auto text-sm font-medium transition-colors rounded bg-opacity-20 ">
+          Encryption status: <span class="font-semibold">{{ encryptionStatus().output.result ? 'ok' : 'nok' }}</span>
+        </span>
+        }
+        <!-- Clear input -->
+        <button (click)="encryptionForm.controls.output.reset()" [disabled]="!encryptionForm.value.output" mat-button
+          color="warn" class="ml-auto">Clear</button>
+        <!-- Copy to clipboard -->
+        <button [disabled]="!encryptionForm.value.output" mat-button
+          [cdkCopyToClipboard]="encryptionForm.getRawValue().output" [cdkCopyToClipboardAttempts]="5">Copy!</button>
+      </div>
+
+      <mat-form-field subscriptSizing="dynamic" class="w-full bg-slate-50">
+        <mat-label>Output Procedure/Function</mat-label>
+        <textarea formControlName="output" matInput cols="50" rows="15" contenteditable="false" readonly></textarea>
+      </mat-form-field>
+
+      <!-- Unencrypted words -->
+      @if (encryptionStatus().output.unencryptedWords?.length) {
+      <section class="flex flex-col gap-y-1">
+        <p class="text-slate-400">Unencrypted words: <span class="font-semibold text-red-600">{{
+            encryptionStatus().output.unencryptedWords?.length }}</span></p>
+        <ul class="w-full overflow-x-hidden max-h-80">
+          @for (unencryptedWord of encryptionStatus().output.unencryptedWords; track $index) {
+          <li
+            class="inline-block px-2 py-1 mb-2 mr-4 text-sm font-medium text-red-600 bg-red-600 rounded bg-opacity-20">
+            {{ unencryptedWord }}
+          </li>
+          }
+        </ul>
+      </section>
+      }
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="pt-12 pb-4 mt-auto text-sm text-center text-slate-500">
+  &copy; {{ currentYear }} Darel Ngogang
+</footer>

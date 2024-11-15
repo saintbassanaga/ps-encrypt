@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Probmis CAS",
+    "url": "assets/datasets/encryption_table_probmis_cas.json",
+    "default": true
+  },
+  {
+    "name": "Probmis MINFI",
+    "url": "assets/datasets/encryption_table_probmis_minfiExec.json"
+  }
+]
